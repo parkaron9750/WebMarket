@@ -31,6 +31,7 @@
 	</nav>
 	<br>
 	<%
+		ProductDAO instance = ProductDAO.getInstance();
 		String message = (String)session.getAttribute("message");
 		if(message != null){
 	%>
@@ -42,15 +43,26 @@
 		}
 	%>
 	<%
-	 	ProductDAO instance = ProductDAO.getInstance();
-		List<ProductDTO> productlist = instance.getAllProduct();
+		int pageSize = 9; //한페이지에 상품 갯수
+		int pageCount = 1; //현재 페이지
+		String pagIng = request.getParameter("page");
+		
+		if(pagIng != null){
+			pageCount = Integer.parseInt(pagIng);
+		}
+		
+		int offset = (pageCount - 1) * pageSize;
+		List<ProductDTO> pageList = instance.getPagIng(offset, pageSize);
+		
+		int totalProduct = instance.getTotalProduct();
+		int totalPage = (int)Math.ceil((double) totalProduct / pageSize);
 	%>
 	<div class="container">	
         <div class="row" align="center">
         	<%
 
-        		if(productlist != null && !productlist.isEmpty()){
-        			for(ProductDTO item : productlist){
+        		if(pageList != null && !pageList.isEmpty()){
+        			for(ProductDTO item : pageList){
      
         	%>
 		        		<div class="col-md-4">
@@ -68,10 +80,32 @@
         		<a href="ProductADD.jsp" class="btn btn-secondary">상품 추가&raquo;</a>	
         	<%
         		}
-        		session.setAttribute("productlist", productlist);
+        		
         	%>	
         </div>
 	</div>
+	
+	<nav aria-label="Page navigation">
+	    <ul class="pagination justify-content-center">
+	        <li class="page-item <%= (pageCount == 1) ? "disabled" : "" %>">
+	            <a class="page-link" href="?page=<%= pageCount - 1 %>" aria-label="Previous">
+	                <span aria-hidden="true">&laquo;</span>
+	                <span class="sr-only">Previous</span>
+	            </a>
+	        </li>
+	        <% for (int i = 1; i <= totalPage; i++) { %>
+	            <li class="page-item <%= (i == pageCount) ? "active" : "" %>">
+	                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+	            </li>
+	        <% } %>
+	        <li class="page-item <%= (pageCount == totalPage) ? "disabled" : "" %>">
+	            <a class="page-link" href="?page=<%= pageCount + 1 %>" aria-label="Next">
+	                <span aria-hidden="true">&raquo;</span>
+	                <span class="sr-only">Next</span>
+	            </a>
+	        </li>
+	    </ul>
+	</nav>
 
 </body>
 </html>

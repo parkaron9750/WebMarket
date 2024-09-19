@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,14 +36,20 @@ public class ProductServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * 데이터베이스에서 상품 검색 관련
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String productTag = request.getParameter("productTag");
-		String searchText = request.getParameter("searchText");
+		String productTag = request.getParameter("productTag"); // 분류
+		String searchText = request.getParameter("searchText"); // 텍스트에서 입력한 값 검색
 		
 		try {
-			ArrayList<ProductDTO> searchList = instance.searchProduct(productTag, searchText);
-			request.setAttribute("searchList", searchList);
+			List<ProductDTO> searchList = instance.searchProduct(productTag, searchText);
+			request.setAttribute("searchList", searchList); // 검색해서 나온 값을 저장
 			request.getRequestDispatcher("ProductSearch.jsp").forward(request, response);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,7 +77,7 @@ public class ProductServlet extends HttpServlet {
 				case "remove" :
 					removeProduct(request, response);
 					break;
-				//장바구니
+				//장바구니에 상품 추가
 				case "order" :
 					orderProduct(request, response);
 					break;

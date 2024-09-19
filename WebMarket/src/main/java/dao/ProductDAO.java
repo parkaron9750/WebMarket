@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -178,8 +179,8 @@ public class ProductDAO {
 		}
 	}
 	
-	public ArrayList<ProductDTO> searchProduct(String productTag, String searchText) throws SQLException{
-		ArrayList<ProductDTO> searchList = new ArrayList<ProductDTO>();		
+	public List<ProductDTO> searchProduct(String productTag, String searchText) throws SQLException{
+		List<ProductDTO> searchList = new ArrayList<ProductDTO>();		
 		switch(productTag) {
 			case "name" :
 				productTag = "productname";
@@ -219,6 +220,66 @@ public class ProductDAO {
 			e1.printStackTrace();
 		}
 		return searchList;
+	}
+	/**
+	 * 검색 된 제품의 목록들을 페이징 해주는 코드
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<ProductDTO> getPagIng(int start, int end) throws SQLException{
+		List<ProductDTO> products = new ArrayList<ProductDTO>();
+		String pagIngSql ="select * from productList limit ? offset ?";
+		
+		try(Connection connection = DB.getConnection();
+			PreparedStatement statement = connection.prepareStatement(pagIngSql)){
+				statement.setInt(1, end); // 보여줄 제품의 갯수 끝
+				statement.setInt(2, start); // 보여줄 제품의 갯수의 시작
+				
+			try(ResultSet resultSet = statement.executeQuery()){
+				while(resultSet.next()) {
+					ProductDTO item = new ProductDTO();
+					item.setProductId(resultSet.getString("productid"));
+					item.setProductName(resultSet.getString("productname"));
+					item.setProductPrice(resultSet.getInt("productprice"));
+					item.setProductInfo(resultSet.getString("productinfo"));
+					item.setProductCompany(resultSet.getString("productcompany"));
+					item.setProductTag(resultSet.getString("producttag"));
+					item.setProductStock(resultSet.getInt("productstock"));
+					
+					products.add(item);
+				}
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		return products;
+	}
+	
+	/**
+	 * 데이터베이스에서 총 제품 갯수를 구하는 코드
+	 * @return
+	 * @throws SQLException
+	 */
+	public int getTotalProduct() throws SQLException {
+		String totalSql = "select count(*) from productList"; 
+		int total = 0;
+		
+		try(Connection connection = DB.getConnection();
+			PreparedStatement statement = connection.prepareStatement(totalSql);
+			ResultSet resultSet = statement.executeQuery()){
+			
+			if(resultSet.next()) {
+				total = resultSet.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return total;
 	}
 }
 
