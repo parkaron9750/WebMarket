@@ -177,4 +177,48 @@ public class ProductDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	public ArrayList<ProductDTO> searchProduct(String productTag, String searchText) throws SQLException{
+		ArrayList<ProductDTO> searchList = new ArrayList<ProductDTO>();		
+		switch(productTag) {
+			case "name" :
+				productTag = "productname";
+				break;
+			
+			case "company" :
+				productTag = "productcompany";
+				break;
+			
+			case "tag" :
+				productTag = "producttag";
+				break;
+		}
+		
+		String searchSql = "select * from productList where " + productTag + " like ?";
+		try(Connection connection = DB.getConnection();
+			PreparedStatement statement = connection.prepareStatement(searchSql)){
+				statement.setString(1, "%" + searchText + "%");
+			
+			try(ResultSet resultSet = statement.executeQuery()){
+				while(resultSet.next()){
+					ProductDTO item = new ProductDTO();
+					item.setProductId(resultSet.getString("productid"));
+					item.setProductName(resultSet.getString("productname"));
+					item.setProductPrice(resultSet.getInt("productprice"));
+					item.setProductInfo(resultSet.getString("productinfo"));
+					item.setProductCompany(resultSet.getString("productcompany"));
+					item.setProductTag(resultSet.getString("producttag"));
+					item.setProductStock(resultSet.getInt("productstock"));
+					
+					searchList.add(item);
+				} 
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		return searchList;
+	}
 }
+

@@ -26,14 +26,29 @@ public class ProductServlet extends HttpServlet {
 		
 		try {
 			switch(action) {
-				case search :
+				case "search" :
 					searchProduct(request, response);
 					break;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
-	private void serachProduct()
+	private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String productTag = request.getParameter("productTag");
+		String searchText = request.getParameter("searchText");
+		
+		try {
+			ArrayList<ProductDTO> searchList = instance.searchProduct(productTag, searchText);
+			request.setAttribute("searchList", searchList);
+			request.getRequestDispatcher("ProductSearch.jsp").forward(request, response);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			request.setAttribute("message", "검색 제품이 존재하지 않습니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+		}
+	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");

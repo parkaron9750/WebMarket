@@ -10,15 +10,15 @@
 <html>
 <head><link rel="stylesheet" href="./resource/css/bootstrap.min.css">
 <meta charset="UTF-8">
-<title>상품 목록</title>
+<title>검색 목록</title>
 </head>
 <body>
 	<jsp:include page="Nav.jsp"/>
 	<div class="jumbotron">
-		<h1>상품 목록</h1>
+		<h1>검색 목록</h1>
 	</div>
 	<nav class="navbar">
-	  	<form class="form-inline ml-auto" action="Product">
+	  	<form class="form-inline ml-auto" action="Product" method="Get">
 	  		<select id="productTag" name="productTag" class="form-control">
                 <option value="name">상품명</option>
                 <option value="company">제조사</option>
@@ -31,26 +31,27 @@
 	</nav>
 	<br>
 	<%
-		String message = (String)session.getAttribute("message");
+		
+		String message = (String)request.getAttribute("message");
 		if(message != null){
 	%>
 		<script type="text/javascript">
-			alert('<%=message %>');
+			alert("<%=message%>")
 		</script>
 	<%	
-		session.removeAttribute("message");
+		request.removeAttribute("message");
 		}
 	%>
 	<%
-	 	ProductDAO instance = ProductDAO.getInstance();
-		List<ProductDTO> productlist = instance.getAllProduct();
+	 	List<ProductDTO> searchList = (List<ProductDTO>)request.getAttribute("searchList");
+
 	%>
 	<div class="container">	
         <div class="row" align="center">
         	<%
 
-        		if(productlist != null && !productlist.isEmpty()){
-        			for(ProductDTO item : productlist){
+        		if(searchList != null && !searchList.isEmpty()){
+        			for(ProductDTO item : searchList){
      
         	%>
 		        		<div class="col-md-4">
@@ -64,11 +65,10 @@
         			}
         		} else {
         	%>
-        		<p>상품이 존재하지 않습니다.<p>
-        		<a href="ProductADD.jsp" class="btn btn-secondary">상품 추가&raquo;</a>	
+        		<p>검색하신 상품이 존재하지 않습니다.<p>
+        		<a href="ProductList.jsp" class="btn btn-secondary">상품 목록&raquo;</a>	
         	<%
         		}
-        		session.setAttribute("productlist", productlist);
         	%>	
         </div>
 	</div>
