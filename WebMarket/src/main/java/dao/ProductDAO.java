@@ -43,8 +43,9 @@ public class ProductDAO {
 				String productCompany = resultSet.getString("productcompany");
 				String productTag = resultSet.getString("producttag");
 				int productStock = resultSet.getInt("productstock");
+				String productImage = resultSet.getString("productimage");
 				
-				ProductDTO item = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock);
+				ProductDTO item = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock, productImage);
 				productlist.add(item);
 			}
 		}catch (SQLException e) {
@@ -58,7 +59,7 @@ public class ProductDAO {
 	 * @throws SQLException
 	 */
 	public void createProduct(ProductDTO product) throws SQLException {
-		String createSql = "insert into productList (productid, productname, productprice, productinfo, productcompany, producttag, productstock) values (?, ?, ?, ?, ?, ?, ?)";
+		String createSql = "insert into productList (productid, productname, productprice, productinfo, productcompany, producttag, productstock, productimage) values (?, ?, ?, ?, ?, ?, ?, ?)";
 	
 		try(Connection connection = DB.getConnection();
 			PreparedStatement statement = connection.prepareStatement(createSql)){
@@ -69,6 +70,7 @@ public class ProductDAO {
 				statement.setString(5, product.getProductCompany());
 				statement.setString(6, product.getProductTag());
 				statement.setInt(7, product.getProductStock());
+				statement.setString(8, product.getProductImage());
 				
 				statement.executeUpdate();
 				
@@ -99,8 +101,9 @@ public class ProductDAO {
 					String productCompany = resultSet.getString("productcompany");
 					String productTag = resultSet.getString("producttag");
 					int productStock = resultSet.getInt("productstock");
+					String productImage = resultSet.getString("productimage");
 					
-					product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock);
+					product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock, productImage);
 				}
 			}catch (SQLException e) {
 				e.printStackTrace();
@@ -128,7 +131,8 @@ public class ProductDAO {
 			statement.setString(4, product.getProductCompany());
 			statement.setString(5, product.getProductTag());
 			statement.setInt(6, product.getProductStock());
-			statement.setString(7, product.getProductId());
+			statement.setString(7, product.getProductImage());
+			statement.setString(8, product.getProductId());
 			
 			statement.executeUpdate();
 			
@@ -209,7 +213,7 @@ public class ProductDAO {
 					item.setProductCompany(resultSet.getString("productcompany"));
 					item.setProductTag(resultSet.getString("producttag"));
 					item.setProductStock(resultSet.getInt("productstock"));
-					
+					item.setProductImage(resultSet.getString("productimage"));
 					searchList.add(item);
 				} 
 			}catch (SQLException e) {
@@ -246,7 +250,7 @@ public class ProductDAO {
 					item.setProductCompany(resultSet.getString("productcompany"));
 					item.setProductTag(resultSet.getString("producttag"));
 					item.setProductStock(resultSet.getInt("productstock"));
-					
+					item.setProductImage(resultSet.getString("productimage"));
 					products.add(item);
 				}
 			}catch (SQLException e) {

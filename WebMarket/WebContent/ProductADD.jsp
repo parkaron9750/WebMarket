@@ -15,7 +15,7 @@
 	</div>
 	
 	<div class="container">
-	  <form action="Product" method="post">
+	  <form action="Image" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="create">
         
         <div class="form-group">
@@ -59,6 +59,12 @@
             <label for="productStock">재고 수 :</label>
             <input type="number" id="productStock" name="productStock" class="form-control" placeholder="제품의 재고 수를 입력해주세요." required="required">
         </div>
+        
+        <div class="form-group">
+            <label for="productImage">상품 이미지 :</label>
+            <input type="file" id="productImage" name="productImage" class="form-control">
+        </div>
+        
         <div>        
 	        <input type="submit" class="btn btn-primary" value="등록">
 	        <a href="MainPage.jsp" class="btn btn-secondary">취소</a>

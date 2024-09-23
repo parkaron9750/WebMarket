@@ -49,7 +49,6 @@ public class CartServlet extends HttpServlet {
 			if(cart != null) {
 				cart.removeIf(item -> item.getProductId().equals(productId));
 				session.setAttribute("cart", cart);
-				session.setAttribute("message", "상품을 취소하였습니다.");
 			}
 			response.sendRedirect("ProductCart.jsp");
 		}catch (Exception e) {

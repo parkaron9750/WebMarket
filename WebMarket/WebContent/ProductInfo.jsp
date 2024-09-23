@@ -19,15 +19,19 @@
 		String id = request.getParameter("productId");
 		ProductDAO instance = ProductDAO.getInstance();
 		ProductDTO product = instance.readProduct(id);
-		session.setAttribute("product", product);
+		
 	%>
 	<form action="Product" method="post">
 		<div class="container">	
-        	<div class="row">     	
+        	<div class="row">     
 		   		<%
 		   			if(product != null){
 		   		%>
-			   	  <div class="col-md-6">
+        		  <div class="col-md-5">
+        		  	  <img src="D:/JSP/image/<%=product.getProductImage() %>" style="width:100%">
+        		  </div
+        		  >	
+			   	  <div class="col-md-6" >
 				      <div align="right">
 				   		   <a href="ProductUpdate.jsp?productId=<%=product.getProductId() %>" class="btn btn-primary">상품 수정&raquo;</a>	
 				   	  </div>
@@ -49,7 +53,6 @@
 					   </div> 
 			      </div>
         		<%
-        			session.setAttribute("product", product);
 		   			} else {
         		%>
 			        	<p>상품이 존재하지 않습니다.<p>

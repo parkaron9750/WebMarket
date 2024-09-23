@@ -18,14 +18,14 @@
 		<h1>상품 목록</h1>
 	</div>
 	<nav class="navbar">
-	  	<form class="form-inline ml-auto" action="Product">
+	  	<form class="form-inline ml-auto" action="Search" method="get">
+	  		<input type= "hidden" name="action" value = "search">
 	  		<select id="productTag" name="productTag" class="form-control">
                 <option value="name">상품명</option>
                 <option value="company">제조사</option>
                 <option value="tag">분 류</option>
             </select>
 	    	<input class="form-control mr-sm-2" type="search" name="searchText" placeholder="검색어를 입력해주세요." aria-label="Search">
-	  		<input type= "hidden" name="action" value = "search">
 	    	<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
 	 	 </form>
 	</nav>
@@ -66,6 +66,7 @@
      
         	%>
 		        		<div class="col-md-4">
+		        			<img src = "D:/JSP/image/<%=item.getProductImage()%>" style="width:100%">
 		        			<h3><%=item.getProductName() %></h3>
 		        			<p><%=item.getProductInfo() %>    	
 		        			<p><%=item.getProductPrice() %>원</p>

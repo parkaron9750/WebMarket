@@ -11,7 +11,11 @@
 <title>상품 수정</title>
 <script>
 	function confirmRemove(){
-		return confirm("상품을 삭제하시겠습니까?")
+		return confirm("상품을 삭제하시겠습니까?");
+	}
+	
+	function confirmUpdate(){
+		return confirm("상품을 수정하시겠습니까?");
 	}
 </script>
 </head>
@@ -32,7 +36,9 @@
 		}
 	%>
 	<%	
-		ProductDTO product = (ProductDTO)session.getAttribute("product");
+		String productId = request.getParameter("productId");
+		ProductDAO instance = ProductDAO.getInstance();
+		ProductDTO product = instance.readProduct(productId);
 	%>
 	<div class="container">	
        <form action="Product" method="post" onsubmit="return confirmRemove();">
@@ -42,7 +48,7 @@
 	        	<input type="submit" value = "삭제" class="btn btn-danger">
 	        </div>
        </form>
-	  <form action="Product" method="post">
+	  <form action="Image" method="post" onsubmit="return confirmUpdate();" enctype="multipart/form-data">
         <div class="form-group">
             <label for="productId">상품 코드 :</label>
             <input type="text" id="productId" name="productId" class="form-control" value="<%=product.getProductId() %>" readonly>
@@ -83,6 +89,11 @@
         <div class="form-group">
             <label for="productStock">재고 수 :</label>
             <input type="number" id="productStock" name="productStock" class="form-control" value="<%=product.getProductStock() %>" placeholder="제품의 재고 수를 입력해주세요." required="required">
+        </div>
+        
+         <div class="form-group">
+            <label for="productImage">상품 수정 이미지 :</label>
+            <input type="file" id="productImage" name="productImage" class="form-control">
         </div>
         
         <input type="hidden" name="action" value="update">

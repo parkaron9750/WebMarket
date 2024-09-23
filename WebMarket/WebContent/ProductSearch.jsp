@@ -18,7 +18,7 @@
 		<h1>검색 목록</h1>
 	</div>
 	<nav class="navbar">
-	  	<form class="form-inline ml-auto" action="Product" method="Get">
+	  	<form class="form-inline ml-auto" action="Search" method="Get">
 	  		<select id="productTag" name="productTag" class="form-control">
                 <option value="name">상품명</option>
                 <option value="company">제조사</option>
