@@ -96,6 +96,8 @@ public class ProductServlet extends HttpServlet {
 	 * @throws ServletException 
 	 */
 	private void createProduct(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
+		HttpSession session = request.getSession();
+		
 		String productId = request.getParameter("productId");
 		String productName = request.getParameter("productName");
 		int productPrice = Integer.parseInt(request.getParameter("productPrice"));
@@ -107,13 +109,15 @@ public class ProductServlet extends HttpServlet {
 		
 		try {			
 			if(product != null) {
-				instance.createProduct(product, request);
+				instance.createProduct(product);
+				session.setAttribute("message", "상품이 등록되었습니다.");
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
-			response.sendRedirect("ProductList.jsp");
+			session.setAttribute("message", "상품을 등록하는데 실패하였습니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 		}
-		response.sendRedirect("ProductList.jsp");
+		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
 	/**
 	 * 데이터베이스 상품 수정하는 코드
@@ -121,8 +125,11 @@ public class ProductServlet extends HttpServlet {
 	 * @param response
 	 * @throws SQLException
 	 * @throws IOException
+	 * @throws ServletException 
 	 */
-	private void updateProduct(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+	private void updateProduct(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
+		HttpSession session = request.getSession();
+		
 		String productId = request.getParameter("productId");
 		String productName = request.getParameter("productName");
 		int productPrice = Integer.parseInt(request.getParameter("productPrice"));
@@ -134,28 +141,37 @@ public class ProductServlet extends HttpServlet {
 		try {
 			ProductDTO product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock);
 			if(product != null) {
-				instance.updateProduct(product, request);
-			}
-			response.sendRedirect("ProductList.jsp");			
+				session.setAttribute("message", "상품이 수정되었습니다.");
+				instance.updateProduct(product);
+			}		
 		}catch (SQLException e) {
 			e.printStackTrace();
+			session.setAttribute("message", "상품이 존재하지 않습니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 		}
+		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
 	/**
 	 * 데이터베이스에서 상품 삭제하는 코드
 	 * @param request
 	 * @param response
 	 * @throws IOException 
+	 * @throws ServletException 
 	 */
-	private void removeProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
-			String productId = request.getParameter("productId");
-			try {
-				instance.removeProduct(productId, request);
-				response.sendRedirect("ProductList.jsp");
-				
-			}catch (SQLException e) {
-				e.printStackTrace();
-			}
+	private void removeProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		HttpSession session = request.getSession();
+		String productId = request.getParameter("productId");
+		
+		try {
+			instance.removeProduct(productId);
+			session.setAttribute("message", "상품이 삭제되었습니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+			session.setAttribute("message", "상품을 삭제하는데 오류가 발생하였습니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+		}
 	}
 	
 	/**
@@ -163,8 +179,9 @@ public class ProductServlet extends HttpServlet {
 	 * @param request
 	 * @param response
 	 * @throws IOException 
+	 * @throws ServletException 
 	 */
-	private void orderProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void orderProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession();
 		ArrayList<CartDTO> cart = (ArrayList<CartDTO>)session.getAttribute("cart");
 		String productId = request.getParameter("productId");
@@ -192,7 +209,7 @@ public class ProductServlet extends HttpServlet {
 				}
 				session.setAttribute("cart", cart);
 				session.setAttribute("message", "장바구니에 상품이 추가되었습니다.");
-				response.sendRedirect("ProductCart.jsp");
+				request.getRequestDispatcher("ProductCart.jsp").forward(request, response);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

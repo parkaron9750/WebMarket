@@ -14,7 +14,7 @@
 		<h1>상품 등록</h1>
 	</div>
 	
-	<div class="container">	
+	<div class="container">
 	  <form action="Product" method="post">
         <input type="hidden" name="action" value="create">
         
