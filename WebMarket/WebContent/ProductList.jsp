@@ -66,7 +66,7 @@
      
         	%>
 		        		<div class="col-md-4">
-		        			<img src = "D:/JSP/image/<%=item.getProductImage()%>" style="width:100%">
+		        			<img src="./resource/image/<%=item.getProductImage() %>" style="width:50%" >
 		        			<h3><%=item.getProductName() %></h3>
 		        			<p><%=item.getProductInfo() %>    	
 		        			<p><%=item.getProductPrice() %>원</p>
@@ -110,3 +110,4 @@
 
 </body>
 </html>
+ 

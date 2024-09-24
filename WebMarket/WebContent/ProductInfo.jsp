@@ -16,9 +16,9 @@
 		<h1>상세 정보</h1>
 	</div>
 	<%
-		String id = request.getParameter("productId");
-		ProductDAO instance = ProductDAO.getInstance();
-		ProductDTO product = instance.readProduct(id);
+		String id = request.getParameter("productId"); //넘어온 상품 이름
+		ProductDAO instance = ProductDAO.getInstance(); 
+		ProductDTO product = instance.readProduct(id); //상품 이름
 		
 	%>
 	<form action="Product" method="post">
@@ -27,10 +27,9 @@
 		   		<%
 		   			if(product != null){
 		   		%>
-        		  <div class="col-md-5">
-        		  	  <img src="D:/JSP/image/<%=product.getProductImage() %>" style="width:100%">
-        		  </div
-        		  >	
+        		  <div class="col-md-6">
+        		  	  <img src="./resource/image/<%=product.getProductImage()%>" style="width:100%">	  
+        		  </div>	
 			   	  <div class="col-md-6" >
 				      <div align="right">
 				   		   <a href="ProductUpdate.jsp?productId=<%=product.getProductId() %>" class="btn btn-primary">상품 수정&raquo;</a>	

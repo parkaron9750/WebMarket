@@ -28,7 +28,7 @@ public class ImageServlet extends HttpServlet{
 		response.setCharacterEncoding("UTF-8");
 		
 
-		String uploadPath = "D:\\JSP\\image\\";
+		String uploadPath = request.getServletContext().getRealPath("/resource/image");
 		int imageSize = 10 * 1024 * 1024;
 		String encType = "UTF-8";
 
@@ -67,16 +67,16 @@ public class ImageServlet extends HttpServlet{
 		String productTag = multi.getParameter("productTag");
 		int productStock = Integer.parseInt(multi.getParameter("productStock"));
 		
-		Enumeration<?> files = multi.getFileNames();
-		String ImageName = (String)files.nextElement();
-		String productImage = multi.getFilesystemName(ImageName);
-		
+		Enumeration files = multi.getFileNames(); //모든 파일의 필드의 이름을 반환
+		String fileName = (String)files.nextElement(); //파일 이름을 반환
+		String productImage = multi.getFilesystemName(fileName); //저장 된 이미지 파일 이름을 가져온다.
 		
 		ProductDTO product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock, productImage);
 		
 		try {			
 			if(product != null) {
 				instance.createProduct(product);
+				System.out.println();
 				session.setAttribute("message", "상품이 등록되었습니다.");
 			}
 		}catch (SQLException e) {
@@ -99,9 +99,9 @@ public class ImageServlet extends HttpServlet{
 		String productTag = multi.getParameter("productTag");
 		int productStock = Integer.parseInt(multi.getParameter("productStock"));
 		
-		Enumeration<?> files = multi.getFileNames();
-		String ImageName = (String)files.nextElement();
-		String productImage = multi.getFilesystemName(ImageName);
+		Enumeration files = multi.getFileNames();
+		String fileName = (String)files.nextElement();
+		String productImage = multi.getFilesystemName(fileName);
 		
 		try {
 			ProductDTO product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock, productImage);
@@ -118,3 +118,4 @@ public class ImageServlet extends HttpServlet{
 		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
 }
+

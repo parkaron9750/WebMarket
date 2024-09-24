@@ -55,6 +55,7 @@
      
         	%>
 		        		<div class="col-md-4">
+		        			<img src="./resource/image/<%=item.getProductImage() %>" style="width:70%">
 		        			<h3><%=item.getProductName() %></h3>
 		        			<p><%=item.getProductInfo() %>    	
 		        			<p><%=item.getProductPrice() %>원</p>

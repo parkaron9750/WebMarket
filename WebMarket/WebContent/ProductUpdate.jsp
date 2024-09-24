@@ -10,10 +10,11 @@
 <head><link rel="stylesheet" href="./resource/css/bootstrap.min.css">
 <title>상품 수정</title>
 <script>
+	/*상품 삭제*/
 	function confirmRemove(){
 		return confirm("상품을 삭제하시겠습니까?");
 	}
-	
+	/*상품 수정*/
 	function confirmUpdate(){
 		return confirm("상품을 수정하시겠습니까?");
 	}
