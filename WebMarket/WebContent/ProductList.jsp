@@ -32,7 +32,7 @@
 	<br>
 	<%
 		ProductDAO instance = ProductDAO.getInstance();
-		String message = (String)session.getAttribute("message");
+		String message = (String)request.getAttribute("message");
 		if(message != null){
 	%>
 		<script type="text/javascript">

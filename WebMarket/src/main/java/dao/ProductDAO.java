@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,8 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import db.DB;
 import dto.ProductDTO;
@@ -59,10 +58,10 @@ public class ProductDAO {
 	 * @throws SQLException
 	 */
 	public void createProduct(ProductDTO product) throws SQLException {
-		String createSql = "insert into productList (productid, productname, productprice, productinfo, productcompany, producttag, productstock, productimage) values (?, ?, ?, ?, ?, ?, ?, ?)";
+		String createSql = "{call createProduct(?, ?, ?, ?, ?, ?, ?, ?)}";
 	
 		try(Connection connection = DB.getConnection();
-			PreparedStatement statement = connection.prepareStatement(createSql)){
+			CallableStatement statement = connection.prepareCall(createSql)){
 				statement.setString(1, product.getProductId());
 				statement.setString(2, product.getProductName());
 				statement.setInt(3, product.getProductPrice());
@@ -72,13 +71,42 @@ public class ProductDAO {
 				statement.setInt(7, product.getProductStock());
 				statement.setString(8, product.getProductImage());
 				
-				statement.executeUpdate();
+				statement.execute();
 				
 		}catch (SQLException e) {
 			e.printStackTrace();
-			
+			throw e;
 		}
 	}
+	
+	/**
+	 * 상품 정보를 수정하는 코드
+	 * @param product
+	 * @throws SQLException
+	 */
+	public void updateProduct(ProductDTO product) throws SQLException {
+		String updateSql = "{call updateProduct(?, ?, ?, ?, ?, ?, ?, ?)}";
+		
+		try(Connection connection = DB.getConnection();
+			CallableStatement statement = connection.prepareCall(updateSql)) {
+			
+			statement.setString(1, product.getProductId());
+			statement.setString(2, product.getProductName());
+			statement.setInt(3, product.getProductPrice());
+			statement.setString(4, product.getProductInfo());
+			statement.setString(5, product.getProductCompany());
+			statement.setString(6, product.getProductTag());
+			statement.setInt(7, product.getProductStock());
+			statement.setString(8, product.getProductImage());
+					
+			statement.execute();
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
 	/**
 	 * 상품 특정해서 가져오는 코드
 	 * @param productId
@@ -114,32 +142,6 @@ public class ProductDAO {
 		return product;
 	}
 	
-	/**
-	 * 상품 정보를 수정하는 코드
-	 * @param product
-	 * @throws SQLException
-	 */
-	public void updateProduct(ProductDTO product) throws SQLException {
-		String updateSql = "update productList set productname = ?, productprice = ?, productinfo = ?, productcompany = ?, producttag = ?, productstock = ? where productid = ?";
-	
-		try(Connection connection = DB.getConnection();
-			PreparedStatement statement = connection.prepareStatement(updateSql)) {
-			
-			statement.setString(1, product.getProductName());
-			statement.setInt(2, product.getProductPrice());
-			statement.setString(3, product.getProductInfo());
-			statement.setString(4, product.getProductCompany());
-			statement.setString(5, product.getProductTag());
-			statement.setInt(6, product.getProductStock());
-			statement.setString(7, product.getProductImage());
-			statement.setString(8, product.getProductId());
-			
-			statement.executeUpdate();
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * 특정 상품을 데이터베이스에서 삭제하는 코드
@@ -147,13 +149,13 @@ public class ProductDAO {
 	 * @throws SQLException
 	 */
 	public void removeProduct(String productId) throws SQLException {
-		String deleteSql = "delete from productList where productid = ?";
+		String deleteSql = "{call deleteProduct(?)}";
 		
 		try(Connection connection = DB.getConnection();
-			PreparedStatement statement = connection.prepareStatement(deleteSql)){
+			CallableStatement statement = connection.prepareCall(deleteSql)){
 				
 				statement.setString(1, productId);
-				statement.executeUpdate();
+				statement.execute();
 				
 			
 		}catch (SQLException e) {
@@ -168,15 +170,15 @@ public class ProductDAO {
 	 * @throws SQLException
 	 */
 	public void updateStock(String ProductId, int Quantity) throws SQLException {
-		String stockSql = "update productList set productstock = productstock - ? where productid = ?";
+		String stockSql = "{call stockProduct(?, ?)}";
 		
 		try(Connection connection = DB.getConnection();
 			PreparedStatement statement = connection.prepareStatement(stockSql)){
 				
-				statement.setInt(1, Quantity);
-				statement.setString(2, ProductId);
+			statement.setString(1, ProductId);
+			statement.setInt(2, Quantity);
 				
-				statement.executeUpdate();
+			statement.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -184,24 +186,12 @@ public class ProductDAO {
 	
 	public List<ProductDTO> searchProduct(String productTag, String searchText) throws SQLException{
 		List<ProductDTO> searchList = new ArrayList<ProductDTO>();		
-		switch(productTag) {
-			case "name" :
-				productTag = "productname";
-				break;
-			
-			case "company" :
-				productTag = "productcompany";
-				break;
-			
-			case "tag" :
-				productTag = "producttag";
-				break;
-		}
 		
-		String searchSql = "select * from productList where " + productTag + " like ?";
+		String searchSql = "{call searchProduct(?, ?)}";
 		try(Connection connection = DB.getConnection();
-			PreparedStatement statement = connection.prepareStatement(searchSql)){
-				statement.setString(1, "%" + searchText + "%");
+			CallableStatement statement = connection.prepareCall(searchSql)){
+				statement.setString(1, productTag);
+				statement.setString(2, searchText);
 			
 			try(ResultSet resultSet = statement.executeQuery()){
 				while(resultSet.next()){
@@ -221,6 +211,7 @@ public class ProductDAO {
 			}
 		}catch (SQLException e1) {
 			e1.printStackTrace();
+			throw e1;
 		}
 		return searchList;
 	}
@@ -233,12 +224,12 @@ public class ProductDAO {
 	 */
 	public List<ProductDTO> getPagIng(int start, int end) throws SQLException{
 		List<ProductDTO> products = new ArrayList<ProductDTO>();
-		String pagIngSql ="select * from productList limit ? offset ?";
+		String pagIngSql ="{call pageIng(?, ?)}";
 		
 		try(Connection connection = DB.getConnection();
-			PreparedStatement statement = connection.prepareStatement(pagIngSql)){
-				statement.setInt(1, end); // 보여줄 제품의 갯수 끝
-				statement.setInt(2, start); // 보여줄 제품의 갯수의 시작
+			CallableStatement statement = connection.prepareCall(pagIngSql)){
+				statement.setInt(1, start); // 보여줄 제품의 갯수 끝
+				statement.setInt(2, end); // 보여줄 제품의 갯수의 시작
 				
 			try(ResultSet resultSet = statement.executeQuery()){
 				while(resultSet.next()) {

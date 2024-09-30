@@ -55,7 +55,15 @@ public class ImageServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * 상품 이미지 및 상품 등록 관련 코드
+	 * @param multi
+	 * @param request
+	 * @param response
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws ServletException
+	 */
 	private void createProduct(MultipartRequest multi, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
 		HttpSession session = request.getSession();
 		
@@ -76,18 +84,26 @@ public class ImageServlet extends HttpServlet{
 		try {			
 			if(product != null) {
 				instance.createProduct(product);
-				System.out.println();
 				session.setAttribute("message", "상품이 등록되었습니다.");
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 			session.setAttribute("message", "상품을 등록하는데 실패하였습니다.");
-			
-			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+			if(!response.isCommitted())
+				request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 		}
-		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+		if(!response.isCommitted())
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
-	
+	/**
+	 * 상품 수정 관련 코드
+	 * @param multi
+	 * @param request
+	 * @param response
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws ServletException
+	 */
 	private void updateProduct(MultipartRequest multi, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
 		HttpSession session = request.getSession();
 		
@@ -99,22 +115,23 @@ public class ImageServlet extends HttpServlet{
 		String productTag = multi.getParameter("productTag");
 		int productStock = Integer.parseInt(multi.getParameter("productStock"));
 		
-		Enumeration files = multi.getFileNames();
-		String fileName = (String)files.nextElement();
-		String productImage = multi.getFilesystemName(fileName);
+		Enumeration files = multi.getFileNames(); //모든 파일 이름을 가져온다.
+		String fileName = (String)files.nextElement();// 파일 이름을 반환한다.
+		String productImage = multi.getFilesystemName(fileName);//저장된 이미지 파일을 가져온다.
 		
 		try {
 			ProductDTO product = new ProductDTO(productId, productName, productPrice, productInfo, productCompany, productTag, productStock, productImage);
 			if(product != null) {
-				session.setAttribute("message", "상품이 수정되었습니다.");
-				request.setAttribute("product", product);
 				instance.updateProduct(product);
+				request.setAttribute("product", product);
+				session.setAttribute("message", "상품이 수정되었습니다.");
 			}		
 		}catch (SQLException e) {
 			e.printStackTrace();
 			session.setAttribute("message", "상품이 존재하지 않습니다.");
 			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 		}
+	
 		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
 }

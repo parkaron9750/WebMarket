@@ -45,6 +45,12 @@ public class SearchServlet extends HttpServlet {
 		String productTag = request.getParameter("productTag"); // 분류
 		String searchText = request.getParameter("searchText"); // 텍스트에서 입력한 값 검색
 		
+		if(searchText == null || searchText.length() < 2) {
+			request.setAttribute("message", "검색어는 2글자 이상이어야 합니다.");
+			request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+			return;
+		}
+			
 		try {
 			List<ProductDTO> searchList = instance.searchProduct(productTag, searchText);
 			request.setAttribute("searchList", searchList); // 검색해서 나온 값을 저장

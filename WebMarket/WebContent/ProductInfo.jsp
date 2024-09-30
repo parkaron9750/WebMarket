@@ -36,7 +36,7 @@
 				   	  </div>
 			   		
 			    	   <h1><%=product.getProductName() %></h1><br>
-	                   <p><%= product.getProductInfo() %></p>
+	                   <p style="font-size:24px"><%= product.getProductInfo() %></p>
 			    	   <p><strong>상품 코드 : </strong><%=product.getProductId() %></p>
 	                   <p><strong>제조사:</strong> <%= product.getProductCompany() %></p>
 	 				   <p><strong>분류:</strong> <%= product.getProductTag() %></p>
